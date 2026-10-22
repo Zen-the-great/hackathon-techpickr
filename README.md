@@ -19,7 +19,7 @@ Google sign-in is shown only when `VITE_SUPABASE_GOOGLE_AUTH_ENABLED=true` and G
 
 ## Supabase setup
 
-Create `public.profiles` and `public.saved_recommendations` using the schema described in the project request. Enable RLS. The app never creates or recreates tables. PC builds call the read-only `public.build_pc_recommendation` RPC from [`supabase/supabase/supabase/supabase/009_build_pc_recommendation.sql`](./supabase/supabase/supabase/supabase/009_build_pc_recommendation.sql), which expects the existing `public.components` table populated with rows whose `source_name` is `pc-part-dataset`. Apply that function to the existing database if it is not already installed; this project does not delete or recreate component tables. The RPC selects the least expensive eligible record in fixed per-category budget shares; it does not rank parts by workload or user priorities, and compatibility is explicitly marked as unverified.
+Create `public.profiles` and `public.saved_recommendations` using the schema described in the project request. Enable RLS. The app never creates or recreates tables. PC builds call the read-only `public.build_pc_recommendation` RPC from [`supabase/supabase/supabase/supabase/009_build_pc_recommendation.sql`](./supabase/supabase/supabase/supabase/009_build_pc_recommendation.sql), which expects the existing `public.components` table populated with rows whose `source_name` is `pc-part-dataset`. Apply that function to the existing database if it is not already installed; this project does not delete or recreate component tables. The RPC selects the least expensive eligible record in fixed per-category budget shares; it does not rank parts by workload or user priorities, and compatibility is explicitly marked as unverified. The offline build catalog shows rounded indicative price estimates with Amazon/Flipkart search links; these are not live retailer quotes. For database rows to show estimates, populate `specs.price_estimate_inr`, `specs.price_estimate_source`, and optionally `specs.price_estimate_checked_at`. Dataset USD prices are not converted and shown as Indian retail prices.
 
 Example policies for the operations used by the app (apply only after the tables exist; do not add duplicate policy names):
 
@@ -68,7 +68,7 @@ Terminal 2 — frontend:
 npm.cmd run dev
 ```
 
-Open the URL printed by Vite. The Vite development proxy forwards `/api` requests to `http://127.0.0.1:3001`. For a production deployment, deploy the Node backend separately, set its `FRONTEND_ORIGIN`, and set frontend `VITE_RECOMMENDATION_API_URL` to the backend origin before building.
+Open the URL printed by Vite. The Vite development proxy forwards `/api` requests to `http://127.0.0.1:3001`. For a production deployment, deploy the Node backend separately and configure the hosting service to provide its port and bind it on a reachable interface (set `HOST=0.0.0.0` for container hosts that require it). Set backend `FRONTEND_ORIGIN` to the deployed frontend origin, and set frontend `VITE_RECOMMENDATION_API_URL` to the public backend origin (without `/api`) before building. Rebuild and redeploy the frontend after changing that Vite variable. Check `https://YOUR_BACKEND_ORIGIN/api/health` returns JSON with `"ok": true` before testing recommendations; a proxy-generated HTTP 502 usually means the backend is not reachable at the configured origin.
 
 The frontend is configured for the `/TechPickr/` GitHub Pages path. Its `404.html` fallback preserves deep links so refreshing pages such as `/my-recommendations` restores the route before React Router starts.
 
@@ -86,7 +86,7 @@ Health output reports whether Gemini is configured, but never returns the key.
 
 1. Register using email/password. If Supabase email confirmation is enabled, confirm the email before logging in.
 2. Log in, refresh the page, and confirm the account remains signed in; log out from the navigation bar.
-3. Use `/build` for either a laptop or desktop recommendation. Laptop results should show identifiable catalog models with catalog specs, indicative (not live-verified) prices, and clearly labelled Amazon/Flipkart searches. Desktop results should contain actual component records from the Supabase PC Part catalog, a known-cost summary, and explicit compatibility warnings.
+3. Use `/build` for either a laptop or desktop recommendation. Laptop results should show identifiable catalog models with catalog specs, indicative (not live-verified) prices, and clearly labelled Amazon/Flipkart searches. Desktop results should contain actual component records, show rounded estimates and an estimated total when estimates exist, link to Amazon/Flipkart searches, and include explicit compatibility warnings. Verify current price and availability with the retailer.
 4. Ask TechBot a technology question and confirm it responds through the Gemini backend.
 5. Save each recommendation. When signed out, confirm the app routes to login and then saves the pending recommendation without generating again.
 6. Open **My Recommendations**, expand an entry to inspect its original requirements and saved response, then delete it and confirm removal.

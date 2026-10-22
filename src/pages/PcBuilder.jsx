@@ -3,7 +3,10 @@ import { useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import Button from "../components/Button";
 import RecommendationDisplay from "../components/RecommendationDisplay";
-import { generatePcRecommendation } from "../lib/pcRecommendations";
+import {
+  getPcPriceEstimate,
+  generatePcRecommendation,
+} from "../lib/pcRecommendations";
 import "./Questionnaire.css";
 import "./PcBuilder.css";
 
@@ -140,8 +143,22 @@ function getSpecifications(component) {
 
   Object.entries(specs)
     .filter(([key]) =>
-      !["brand", "price", "price_usd", "socket", "ram_type", "form_factor"]
-        .includes(key.toLowerCase())
+      ![
+    "brand",
+    "price",
+    "price_usd",
+    "retailer_price_inr",
+    "retailer_price_verified",
+    "retailer_price_source",
+    "retailer_price_checked_at",
+    "price_estimate_inr",
+    "price_estimate_source",
+    "price_estimate_checked_at",
+    "socket",
+    "ram_type",
+    "form_factor",
+      ]
+    .includes(key.toLowerCase())
     )
     .slice(0, 7)
     .forEach(([key, value]) => {
@@ -303,7 +320,14 @@ function PcBuilder() {
       (secondIndex < 0 ? 999 : secondIndex);
   });
 
-  const total = result?.totalPriceInr;
+  const componentPriceEstimates = components.map(getPcPriceEstimate);
+  const hasCompletePriceEstimates =
+    components.length > 0 && componentPriceEstimates.every(Boolean);
+  const hasOnlyVerifiedPrices =
+    hasCompletePriceEstimates && componentPriceEstimates.every((estimate) => estimate.verified);
+  const total = hasCompletePriceEstimates
+    ? componentPriceEstimates.reduce((sum, estimate) => sum + estimate.amount, 0)
+    : null;
   const budget = result?.budgetMaxInr ?? Number(answers.budget);
   const remaining = total === null || total === undefined
     ? null
@@ -401,7 +425,7 @@ function PcBuilder() {
                 </div>
                 {total !== null && total !== undefined && (
                   <div className="pc-builder-summary-item">
-                    <span>{t("pcBuilder.listedTotal")}</span>
+                    <span>{t(hasOnlyVerifiedPrices ? "pcBuilder.listedTotal" : "pcBuilder.estimatedTotal")}</span>
                     <strong>{formatINR(total, i18n.language)}</strong>
                   </div>
                 )}
@@ -409,8 +433,8 @@ function PcBuilder() {
                   <div className="pc-builder-summary-item">
                     <span>
                       {remaining >= 0
-                        ? t("pcBuilder.budgetRemaining")
-                        : t("pcBuilder.overBudget")}
+                        ? t(hasOnlyVerifiedPrices ? "pcBuilder.budgetRemaining" : "pcBuilder.estimatedBudgetRemaining")
+                        : t(hasOnlyVerifiedPrices ? "pcBuilder.overBudget" : "pcBuilder.estimatedOverBudget")}
                     </span>
                     <strong className={remaining < 0 ? "pc-builder-over" : ""}>
                       {formatINR(Math.abs(remaining), i18n.language)}
@@ -422,7 +446,7 @@ function PcBuilder() {
               {usedPercent !== null && (
                 <div className="pc-builder-progress">
                   <div className="pc-builder-progress-labels">
-                    <span>{t("pcBuilder.listedTotal")}</span>
+                    <span>{t(hasOnlyVerifiedPrices ? "pcBuilder.listedTotal" : "pcBuilder.estimatedTotal")}</span>
                     <strong>{usedPercent.toFixed(0)}%</strong>
                   </div>
                   <div
@@ -445,6 +469,7 @@ function PcBuilder() {
                 {sortedComponents.map((component, index) => {
                   const specifications = getSpecifications(component);
                   const compatibility = getCompatibilityLabel(component, t);
+                  const priceEstimate = getPcPriceEstimate(component);
                   const brand =
                     component.brand ||
                     (typeof component.specs?.brand === "string"
@@ -475,9 +500,20 @@ function PcBuilder() {
                         </h3>
                         {brand && <p className="pc-builder-brand">{brand}</p>}
                         <p className="pc-builder-price">
-                          {component.price_inr !== null
-                            ? formatINR(component.price_inr, i18n.language)
+                          {priceEstimate
+                            ? priceEstimate.amount === 0
+                              ? t("pcBuilder.included")
+                              : formatINR(priceEstimate.amount, i18n.language)
                             : t("pcBuilder.priceUnavailable")}
+                          {priceEstimate && (
+                            <span className="pc-builder-price-source">
+                              {priceEstimate.verified
+                                ? priceEstimate.source
+                                : `${t("pcBuilder.estimatedPrice")}${priceEstimate.checkedAt
+                                  ? ` · ${new Date(priceEstimate.checkedAt).toLocaleDateString(i18n.language)}`
+                                  : ""}`}
+                            </span>
+                          )}
                         </p>
                         {specifications.length > 0 ? (
                           <dl className="pc-builder-specs">
@@ -505,9 +541,9 @@ function PcBuilder() {
                 </p>
               )}
 
-              {result.withinBudget === false && (
+              {hasCompletePriceEstimates && total > budget && (
                 <p className="pc-builder-warning" role="status">
-                  {t("pcBuilder.overBudgetMessage")}
+                  {t(hasOnlyVerifiedPrices ? "pcBuilder.overBudgetMessage" : "pcBuilder.estimatedOverBudgetMessage")}
                 </p>
               )}
 

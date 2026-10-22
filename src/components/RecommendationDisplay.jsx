@@ -5,7 +5,21 @@ import {
   savePendingRecommendation,
   saveRecommendation,
 } from "../lib/savedRecommendations";
+import { getPcPriceEstimate } from "../lib/pcRecommendations";
 import "./RecommendationDisplay.css";
+
+const PC_PRICE_SPEC_KEYS = new Set([
+  "brand",
+  "price",
+  "price_usd",
+  "retailer_price_inr",
+  "retailer_price_verified",
+  "retailer_price_source",
+  "retailer_price_checked_at",
+  "price_estimate_inr",
+  "price_estimate_source",
+  "price_estimate_checked_at",
+]);
 
 const useCaseLabels = {
   gaming: "Gaming",
@@ -65,7 +79,14 @@ export default function RecommendationDisplay({ type, userInput, result }) {
   const displayItems = isLaptop
     ? laptopRecommendations
     : pcComponents.length > 0 ? pcComponents : pcGuidance;
-  const knownPcTotal = result.totalPriceInr;
+  const componentPriceEstimates = pcComponents.map(getPcPriceEstimate);
+  const hasCompletePriceEstimates =
+    pcComponents.length > 0 && componentPriceEstimates.every(Boolean);
+  const hasOnlyVerifiedPrices =
+    hasCompletePriceEstimates && componentPriceEstimates.every((estimate) => estimate.verified);
+  const knownPcTotal = hasCompletePriceEstimates
+    ? componentPriceEstimates.reduce((total, estimate) => total + estimate.amount, 0)
+    : null;
   const pcBudget = Number(result.budgetMaxInr ?? budgetMax);
   const pcRemaining = knownPcTotal === null || knownPcTotal === undefined
     ? null
@@ -158,14 +179,14 @@ export default function RecommendationDisplay({ type, userInput, result }) {
             <strong>₹{pcBudget.toLocaleString("en-IN")}</strong>
           </div>
           <div>
-            <span>Known component total</span>
+            <span>{hasOnlyVerifiedPrices ? "Verified component total" : "Estimated component total"}</span>
             <strong>{knownPcTotal == null ? "Unavailable" : `₹${Number(knownPcTotal).toLocaleString("en-IN")}`}</strong>
           </div>
           <div>
-            <span>Budget remaining</span>
+            <span>{hasOnlyVerifiedPrices ? "Budget remaining" : "Estimated budget remaining"}</span>
             <strong>{pcRemaining == null ? "Unavailable" : `₹${pcRemaining.toLocaleString("en-IN")}`}</strong>
           </div>
-          <p>Prices are dataset estimates converted at ₹{result.conversionRateInrPerUsd ?? 85}/USD, not live retailer prices.</p>
+          <p>Prices marked “estimate” are rounded catalog estimates, not live retailer quotes. Check Amazon or Flipkart for current prices and stock.</p>
         </div>
       )}
 
@@ -185,15 +206,16 @@ export default function RecommendationDisplay({ type, userInput, result }) {
 
       {displayItems.length > 0 ? (
         <div className={`ai-recommendation-list ${isLaptop ? "product-recommendation-list" : ""}`}>
-          {displayItems.map((item, index) => (
+          {displayItems.map((item, index) => {
+            const pcPriceEstimate = !isLaptop ? getPcPriceEstimate(item) : null;
+            return (
             <article className="ai-recommendation-card" key={`${itemKey(item)}-${index}`}>
               <span className="ai-recommendation-number">
                 {isLaptop ? `MATCH ${String(index + 1).padStart(2, "0")}` : `OPTION ${index + 1}`}
               </span>
               {isLaptop ? (
                 <>
-                  <h3>{item.model || item.name}</h3>
-                  {item.brand && <p className="product-brand">{item.brand}</p>}
+                  <h3>{item.name || [item.brand, item.model].filter(Boolean).join(" ") || item.model}</h3>
                   {item.price !== null && item.price !== undefined && (
                     <p className="product-price">
                       ₹{Number(item.price).toLocaleString("en-IN")}
@@ -294,20 +316,32 @@ export default function RecommendationDisplay({ type, userInput, result }) {
                   <h3>{item.model}</h3>
                   {item.brand && <p className="product-brand">{item.brand}</p>}
                   <p className="product-price">
-                    {item.price_inr == null ? "Price unavailable" : `₹${Number(item.price_inr).toLocaleString("en-IN")}`}
-                    {item.price_inr != null && <span>{item.priceSource || "Indicative dataset price"}</span>}
+                    {pcPriceEstimate
+                      ? pcPriceEstimate.amount === 0
+                        ? "Included"
+                        : `₹${Number(pcPriceEstimate.amount).toLocaleString("en-IN")}`
+                      : "Price unavailable"}
+                    {pcPriceEstimate && (
+                      <span>
+                        {pcPriceEstimate.verified
+                          ? pcPriceEstimate.source
+                          : `Estimate · ${pcPriceEstimate.source}${pcPriceEstimate.checkedAt
+                            ? ` · checked ${new Date(pcPriceEstimate.checkedAt).toLocaleDateString("en-IN")}`
+                            : ""}`}
+                      </span>
+                    )}
                   </p>
                   <p className="pc-component-compatibility">
                     Compatibility: <strong>{item.compatibility_status || "Unverified"}</strong>
                   </p>
                   {Object.entries(item.specs || {}).filter(([key, value]) =>
-                    !["brand", "price", "price_usd"].includes(key.toLowerCase()) &&
+                    !PC_PRICE_SPEC_KEYS.has(key.toLowerCase()) &&
                     value !== null && value !== undefined && typeof value !== "object"
                   ).slice(0, 8).length > 0 ? (
                     <dl className="product-specs">
                       {Object.entries(item.specs || {})
                         .filter(([key, value]) =>
-                          !["brand", "price", "price_usd"].includes(key.toLowerCase()) &&
+                          !PC_PRICE_SPEC_KEYS.has(key.toLowerCase()) &&
                           value !== null && value !== undefined && typeof value !== "object"
                         )
                         .slice(0, 8)
@@ -336,7 +370,8 @@ export default function RecommendationDisplay({ type, userInput, result }) {
                 </>
               )}
             </article>
-          ))}
+          );
+          })}
         </div>
       ) : (
         <div className="product-empty-state" role="status">
@@ -378,7 +413,7 @@ export default function RecommendationDisplay({ type, userInput, result }) {
         {isLaptop
           ? "Laptop names, configurations and indicative prices come from the TechPickr catalog and are not checked live. The catalog has no product images, so images are deliberately not substituted. Amazon and Flipkart buttons open searches, not verified product listings. Confirm the exact configuration, current price, stock and return terms with the retailer before buying."
           : pcComponents.length > 0
-            ? "PC components and indicative prices come from the component catalog. Compatibility and current availability have not been verified. Confirm sockets, memory support, power requirements and physical fit before buying."
+            ? "PC component prices are indicative estimates, not live retailer quotes. Check the Amazon or Flipkart searches for current prices and stock. Confirm sockets, memory support, power requirements and physical fit before buying."
             : "Gemini provides general PC component-selection guidance. It does not return verified product models, prices, availability, or compatibility."}
       </aside>
 
