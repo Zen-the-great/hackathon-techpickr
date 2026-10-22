@@ -116,10 +116,12 @@ function HeroBackground() {
 
     // Animation
     let frameId;
-    const clock = new THREE.Clock();
+    const timer = new THREE.Timer();
+    timer.connect(document);
 
-    const render = () => {
-      const t = clock.getElapsedTime();
+    const render = (timestamp) => {
+      timer.update(timestamp);
+      const t = timer.getElapsed();
       outer.rotation.y = t * 0.12;
       outer.rotation.x = t * 0.06;
       inner.rotation.y = -t * 0.2;
@@ -133,11 +135,12 @@ function HeroBackground() {
       renderer.render(scene, camera);
       if (!reduceMotion) frameId = requestAnimationFrame(render);
     };
-    render();
+    render(performance.now());
 
     // Cleanup when the component is removed
     return () => {
       cancelAnimationFrame(frameId);
+      timer.dispose();
       window.removeEventListener("pointermove", onPointerMove);
       observer.disconnect();
       [outerGeo, outerWire, innerGeo, innerWire, ringGeo, dotsGeo].forEach(

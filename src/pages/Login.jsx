@@ -25,7 +25,7 @@ export default function Login() {
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
   const returnTo = location.state?.returnTo || "/my-recommendations";
-  const postLoginDestination = ["/results", "/pc-builder"].includes(returnTo)
+  const postLoginDestination = returnTo === "/results"
     ? "/my-recommendations"
     : returnTo;
   const googleEnabled = import.meta.env.VITE_SUPABASE_GOOGLE_AUTH_ENABLED === "true";

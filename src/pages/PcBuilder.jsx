@@ -1,12 +1,14 @@
 import { useRef, useState } from "react";
+import { useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import Button from "../components/Button";
 import RecommendationDisplay from "../components/RecommendationDisplay";
-import { generateRecommendation } from "../lib/recommendationApi";
+import { generatePcRecommendation } from "../lib/pcRecommendations";
 import "./Questionnaire.css";
 import "./PcBuilder.css";
 
 const TOTAL_STEPS = 5;
+const MAX_USES = 7;
 const MAX_PRIORITIES = 3;
 const PC_BUDGET_MIN_INR = 20000;
 const PC_BUDGET_MAX_INR = 500000;
@@ -17,6 +19,8 @@ const useCaseOptions = [
   { value: "gaming", title: "gaming" },
   { value: "video-editing", title: "videoEditing" },
   { value: "programming", title: "programming" },
+  { value: "engineering", display: "Engineering applications" },
+  { value: "3d-modeling", display: "3D modelling & rendering" },
   { value: "studying", title: "studyingOffice" },
   { value: "graphic-design", title: "graphicDesign" },
   { value: "ai-ml", title: "aiMl" },
@@ -39,6 +43,11 @@ const priorityOptions = [
   { value: "low-noise", title: "lowNoise" },
   { value: "power-efficiency", title: "powerEfficiency" },
   { value: "upgradeability", title: "upgradeability" },
+  { value: "performance", display: "Performance" },
+  { value: "efficiency", display: "Power efficiency" },
+  { value: "portability", display: "Portability" },
+  { value: "battery-life", display: "Battery life" },
+  { value: "compact-size", display: "Compact size" },
 ];
 
 const CATEGORY_ORDER = [
@@ -185,14 +194,19 @@ function getCompatibilityLabel(component, t) {
 
 function PcBuilder() {
   const { t, i18n } = useTranslation();
-  const [step, setStep] = useState(1);
-  const [answers, setAnswers] = useState({
-    budget: DEFAULT_BUDGET_INR,
-    useCases: [],
-    performance: "balanced",
-    priorities: [],
-  });
-  const [result, setResult] = useState(null);
+  const location = useLocation();
+  const initialRequirements = location.state?.userInput ?? location.state?.initialRequirements;
+  const [step, setStep] = useState(() => initialRequirements?.useCases?.length ? 2 : 1);
+  const [answers, setAnswers] = useState(() => ({
+    budget: initialRequirements?.budgetMax ?? initialRequirements?.budget ?? DEFAULT_BUDGET_INR,
+    budgetMin: initialRequirements?.budgetMin ?? PC_BUDGET_MIN_INR,
+    budgetMax: initialRequirements?.budgetMax ?? initialRequirements?.budget ?? DEFAULT_BUDGET_INR,
+    useCases: initialRequirements?.useCases ?? [],
+    details: initialRequirements?.details ?? "",
+    performance: initialRequirements?.performance ?? "balanced",
+    priorities: initialRequirements?.priorities ?? [],
+  }));
+  const [result, setResult] = useState(() => location.state?.savedRecommendation ?? null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const requestPending = useRef(false);
@@ -232,7 +246,11 @@ function PcBuilder() {
     setError("");
 
     try {
-      const recommendation = await generateRecommendation("pc_build", answers);
+      const recommendation = await generatePcRecommendation({
+        ...answers,
+        budget: Number(answers.budget),
+        budgetMax: Number(answers.budget),
+      });
       setResult(recommendation);
     } catch (requestError) {
       setError(
@@ -265,10 +283,10 @@ function PcBuilder() {
 
   const selectedUseCases = useCaseOptions
     .filter((option) => answers.useCases.includes(option.value))
-    .map((option) => t(`pcBuilder.${option.title}`));
+    .map((option) => option.display || t(`pcBuilder.${option.title}`));
   const selectedPriorities = priorityOptions
     .filter((option) => answers.priorities.includes(option.value))
-    .map((option) => t(`pcBuilder.${option.title}`));
+    .map((option) => option.display || t(`pcBuilder.${option.title}`));
 
   const components = result?.components ?? [];
   const sortedComponents = [...components].sort((first, second) => {
@@ -538,18 +556,20 @@ function PcBuilder() {
                 <div className="option-grid three">
                   {useCaseOptions.map((option) => {
                     const selected = answers.useCases.includes(option.value);
+                    const locked = !selected && answers.useCases.length >= MAX_USES;
                     return (
                       <button
                         key={option.value}
                         type="button"
+                        disabled={locked}
                         className={`option ${selected ? "selected" : ""}`}
                         aria-pressed={selected}
                         onClick={() =>
-                          toggleSelection("useCases", option.value)
+                          toggleSelection("useCases", option.value, MAX_USES)
                         }
                       >
                         <span className="option-title">
-                          {t(`pcBuilder.${option.title}`)}
+                          {option.display || t(`pcBuilder.${option.title}`)}
                         </span>
                       </button>
                     );
@@ -564,7 +584,7 @@ function PcBuilder() {
                 <p className="quiz-help">{t("pcBuilder.budgetHelp")}</p>
                 <div className="budget-value">
                   {answers.budget !== "" && !budgetError
-                    ? formatINR(Number(answers.budget), i18n.language)
+                    ? `${formatINR(Number(answers.budgetMin), i18n.language)} – ${formatINR(Number(answers.budget), i18n.language)}`
                     : t("pcBuilder.budgetInvalid")}
                 </div>
                 <label className="pc-budget-label" htmlFor="pc-budget">
@@ -582,10 +602,22 @@ function PcBuilder() {
                     aria-invalid={Boolean(budgetError)}
                     aria-describedby="pc-budget-limits pc-budget-error"
                     onChange={(event) =>
-                      setAnswers((previous) => ({
-                        ...previous,
-                        budget: event.target.value,
-                      }))
+                      setAnswers((previous) => {
+                        const maximum = event.target.value;
+                        if (maximum === "") return { ...previous, budget: "" };
+                        const budgetMax = Number(maximum);
+                        return {
+                          ...previous,
+                          budget: maximum,
+                          budgetMax,
+                          budgetMin: budgetMax >= PC_BUDGET_MIN_INR
+                            ? Math.max(
+                              PC_BUDGET_MIN_INR,
+                              Math.min(Number(previous.budgetMin), budgetMax)
+                            )
+                            : previous.budgetMin,
+                        };
+                      })
                     }
                   />
                 </div>
@@ -607,6 +639,8 @@ function PcBuilder() {
                     setAnswers((previous) => ({
                       ...previous,
                       budget: Number(event.target.value),
+                      budgetMax: Number(event.target.value),
+                      budgetMin: Math.min(Number(previous.budgetMin), Number(event.target.value)),
                     }))
                   }
                 />
@@ -651,7 +685,7 @@ function PcBuilder() {
                         }
                       >
                         <span className="option-title">
-                          {t(`pcBuilder.${option.title}`)}
+                          {option.display || t(`pcBuilder.${option.title}`)}
                         </span>
                         <span className="option-text">
                           {t(`pcBuilder.${option.text}`)}
@@ -692,7 +726,7 @@ function PcBuilder() {
                         }
                       >
                         <span className="option-title">
-                          {t(`pcBuilder.${option.title}`)}
+                          {option.display || t(`pcBuilder.${option.title}`)}
                         </span>
                       </button>
                     );
@@ -713,7 +747,7 @@ function PcBuilder() {
                   )}
                   {renderReviewItem(
                     t("pcBuilder.budgetLabelShort"),
-                    formatINR(Number(answers.budget), i18n.language),
+                    `${formatINR(Number(answers.budgetMin), i18n.language)} – ${formatINR(Number(answers.budget), i18n.language)}`,
                     2
                   )}
                   {renderReviewItem(

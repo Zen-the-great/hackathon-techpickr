@@ -22,31 +22,31 @@
   },
   "home": {
     "heroTitle": "The right PC. Without the guesswork.",
-    "heroText": "Tell TechPickr your budget and how you'll use your computer. Gemini provides general buying guidance; product facts and component compatibility are not verified here.",
+    "heroText": "Laptop matches come from the local product catalog. For desktop PCs, Gemini offers general buying guidance; product details and compatibility are not verified here.",
     "buildPc": "Build My PC",
     "exploreBuilds": "Explore Builds",
-    "heroNote": "Budget in ₹ · AI buying guidance · Plain-language explanations",
+    "heroNote": "Local laptop catalog · Gemini desktop guidance · Verify current prices",
     "howTitle": "How TechPickr works",
     "howText": "Three simple steps from “I don't know where to start” to a build you understand.",
     "step1Title": "Tell us what you need",
     "step1Text": "Share your budget in rupees, what you'll use the computer for, and what matters most to you.",
     "step2Title": "Review the guidance",
-    "step2Text": "Gemini suggests general hardware approaches based on your needs. Verify specifications, prices, availability and component compatibility with manufacturers and retailers before buying.",
+    "step2Text": "Review matching laptop models or get general desktop hardware guidance from Gemini. Verify specifications, prices, availability and compatibility with manufacturers and retailers before buying.",
     "step3Title": "Compare and choose",
-    "step3Text": "Review the guidance and the product facts you should verify before buying.",
+    "step3Text": "Compare actual models or component records, and verify current product facts before buying.",
     "featuresTitle": "Built for beginners",
     "featuresText": "No spec-sheet knowledge needed. We handle the technical parts and explain them simply.",
     "feature1Tag": "Personalized",
     "feature1Title": "Recommendations that fit you",
-    "feature1Text": "Your budget, your use case and your priorities decide the result, not a generic list.",
+    "feature1Text": "Laptop matches use your workload, budget and priorities. Gemini provides general desktop hardware guidance based on your needs.",
     "feature2Tag": "Check first",
     "feature2Title": "Compatibility guidance",
-    "feature2Text": "Gemini does not verify component compatibility. Check sockets, memory type, power requirements and case fit against manufacturer specifications.",
+    "feature2Text": "Gemini does not verify desktop component compatibility. Check sockets, memory, power requirements and case fit against manufacturer specifications.",
     "feature3Tag": "Clear",
     "feature3Title": "Explanations in plain language",
-    "feature3Text": "Every part comes with a simple reason why it was picked, so you understand what you're buying.",
+    "feature3Text": "Results come from catalog records. Missing images, specifications, prices and compatibility data are labelled rather than guessed.",
     "ctaTitle": "Ready to find your PC?",
-    "ctaText": "Answer a few quick questions and get general hardware guidance based on your needs."
+    "ctaText": "Answer a few quick questions to see matching laptop models or get general desktop hardware guidance from Gemini."
   },
   "why": {
     "title": "Buying a PC should feel clear, not stressful.",
@@ -434,7 +434,7 @@
     "unnamedComponent": "Unnamed component"
   },
   "footer": {
-    "description": "Beginner-friendly PC and laptop buying guidance. AI suggestions are not verified product listings or live prices.",
+    "description": "Beginner-friendly PC and laptop matches from catalog records. Prices, stock and compatibility are not live-verified.",
     "copyright": "© 2026 TechPickr. Student project."
   }
 }

@@ -11,6 +11,8 @@ function redactSensitiveText(value) {
 function safeRecommendationItem(item) {
   const userInput = {
     budget: item.userInput.budget,
+    ...(item.userInput.budgetMin !== undefined ? { budgetMin: item.userInput.budgetMin } : {}),
+    ...(item.userInput.budgetMax !== undefined ? { budgetMax: item.userInput.budgetMax } : {}),
     useCases: item.userInput.useCases,
     ...(item.userInput.device ? { device: item.userInput.device } : {}),
     ...(item.userInput.performance ? { performance: item.userInput.performance } : {}),
@@ -85,7 +87,7 @@ export async function saveRecommendation({ type, userInput, result }) {
     recommendation_type: type,
     user_input: safeRecommendationItem({ type, userInput, result }).userInput,
     recommendation_data: result,
-    ai_provider: result.ai_provider || "gemini",
+    ai_provider: result.ai_provider || (type === "laptop" ? "techpickr-catalog" : "supabase-pc-catalog"),
     model_name: result.model_name || null,
   };
   const { data, error } = await supabase

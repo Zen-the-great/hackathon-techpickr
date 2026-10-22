@@ -12,7 +12,7 @@ import {
 import "./Auth.css";
 
 function recordSummary(record) {
-  return record.recommendation_data?.recommendation?.summary || "Saved AI-generated hardware guidance.";
+  return record.recommendation_data?.recommendation?.summary || "Saved hardware recommendation.";
 }
 
 function recordDate(date) {
@@ -133,7 +133,9 @@ export default function MyRecommendations() {
                   <h2>{record.title}</h2>
                   <p className="saved-card-meta">
                     {record.recommendation_type === "pc_build" ? "PC build" : "Laptop"} · {recordDate(record.created_at)}
-                    {record.model_name ? ` · ${record.ai_provider || "gemini"} / ${record.model_name}` : ""}
+                    {record.ai_provider
+                      ? ` · ${record.ai_provider}${record.model_name ? ` / ${record.model_name}` : ""}`
+                      : ""}
                   </p>
                 </div>
                 <button className="saved-delete" type="button" onClick={() => removeRecord(record)} disabled={deleting === record.id}>
@@ -141,11 +143,22 @@ export default function MyRecommendations() {
                 </button>
               </div>
               <p className="saved-card-summary">{recordSummary(record)}</p>
+              <Link
+                className="account-link"
+                to="/results"
+                state={{
+                  type: record.recommendation_type,
+                  userInput: record.user_input,
+                  savedRecommendation: record.recommendation_data,
+                }}
+              >
+                Open saved {record.recommendation_type === "pc_build" ? "PC build" : "laptop matches"}
+              </Link>
               <details>
                 <summary>Open saved recommendation and original requirements</summary>
                 <h3>Original requirements</h3>
                 <pre>{JSON.stringify(record.user_input, null, 2)}</pre>
-                <h3>Saved Gemini response</h3>
+                <h3>Saved recommendation data</h3>
                 <pre>{JSON.stringify(record.recommendation_data, null, 2)}</pre>
               </details>
             </article>
