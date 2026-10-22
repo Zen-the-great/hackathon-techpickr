@@ -196,6 +196,74 @@
   overflow-wrap: anywhere;
 }
 
+.techbot-paragraph {
+  margin: 0 0 10px;
+}
+
+.techbot-paragraph:last-child {
+  margin-bottom: 0;
+}
+
+.techbot-heading {
+  margin: 12px 0 8px;
+  color: #edf3ff;
+  font-size: 1rem;
+  line-height: 1.4;
+}
+
+.techbot-list {
+  margin: 0 0 12px;
+  padding-left: 20px;
+}
+
+.techbot-list li {
+  margin: 4px 0;
+}
+
+.techbot-code {
+  margin: 0 0 12px;
+  padding: 10px 12px;
+  overflow-x: auto;
+  border: 1px solid rgba(132, 154, 209, 0.2);
+  border-radius: 10px;
+  background: rgba(5, 9, 16, 0.72);
+  color: #dce9ff;
+  font: 0.82rem/1.55 "Cascadia Code", Consolas, monospace;
+  white-space: pre;
+}
+
+.techbot-quote {
+  margin: 0 0 12px;
+  padding-left: 12px;
+  border-left: 3px solid rgba(133, 151, 255, 0.65);
+  color: #b9c9e5;
+}
+
+.techbot-divider {
+  width: 100%;
+  margin: 4px 0 12px;
+  border: 0;
+  border-top: 1px solid rgba(132, 154, 209, 0.22);
+}
+
+.techbot-bubble strong {
+  color: #f0f5ff;
+}
+
+.techbot-bubble a {
+  color: #9ccaff;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.techbot-bubble code:not(pre code) {
+  padding: 1px 5px;
+  border-radius: 5px;
+  background: rgba(5, 9, 16, 0.72);
+  color: #c8d7ff;
+  font: 0.85em "Cascadia Code", Consolas, monospace;
+}
+
 .techbot-message-row.user .techbot-bubble {
   border-radius: 14px 14px 4px 14px;
   background: linear-gradient(135deg, rgba(104, 102, 255, 0.18), rgba(52, 181, 255, 0.12));

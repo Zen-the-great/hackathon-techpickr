@@ -25,6 +25,7 @@ function Home() {
 
         <div className="container hero-inner">
           <div className="hero-text">
+            <span className="badge">{t("home.heroTagline")}</span>
             <h1>{t("home.heroTitle")}</h1>
             <p className="hero-sub">{t("home.heroText")}</p>
             <div className="hero-actions">

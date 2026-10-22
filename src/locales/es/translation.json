@@ -12,7 +12,8 @@
     "closeMenu": "Cerrar menú"
   },
   "home": {
-    "heroTitle": "El PC ideal, sin dudas.",
+    "heroTagline": "Think quicker with TechPickr",
+    "heroTitle": "Think quicker with TechPickr",
     "heroText": "Los portátiles recomendados proceden del catálogo local. Para PC de sobremesa, Gemini ofrece orientación general; aquí no se verifican productos ni compatibilidad.",
     "buildPc": "Crear mi PC",
     "exploreBuilds": "Explorar equipos",

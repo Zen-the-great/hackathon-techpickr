@@ -7,24 +7,48 @@ const SUGGESTIONS = [
   "Help me build a PC",
 ];
 
+function formatInline(text) {
+  const tokenPattern = /(\*\*[^*]+\*\*|__[^_]+__|~~[^~]+~~|`[^`]+`|\*[^*\n]+\*|_[^_\n]+_|\[[^\]]+\]\(https?:\/\/[^)\s]+\))/g;
+  return text.split(tokenPattern).filter(Boolean).map((token, index) => {
+    const key = `inline-${index}`;
+    if (/^\*\*.+\*\*$|^__.+__$/.test(token)) {
+      return <strong key={key}>{token.slice(2, -2)}</strong>;
+    }
+    if (/^~~.+~~$/.test(token)) {
+      return <del key={key}>{token.slice(2, -2)}</del>;
+    }
+    if (/^`.+`$/.test(token)) {
+      return <code key={key}>{token.slice(1, -1)}</code>;
+    }
+    if (/^\*.+\*$|^_.+_$/.test(token)) {
+      return <em key={key}>{token.slice(1, -1)}</em>;
+    }
+    const link = token.match(/^\[([^\]]+)\]\((https?:\/\/[^)\s]+)\)$/);
+    if (link) {
+      return (
+        <a key={key} href={link[2]} target="_blank" rel="noopener noreferrer">
+          {link[1]}
+        </a>
+      );
+    }
+    return <span key={key}>{token}</span>;
+  });
+}
+
 function FormattedMessage({ content }) {
   const lines = String(content || "").replace(/\r/g, "").split("\n");
   const blocks = [];
   let paragraph = [];
   let items = [];
   let listType = "";
+  let codeLines = null;
 
   const flushParagraph = () => {
     if (!paragraph.length) return;
 
     blocks.push(
-      <p key={`p-${blocks.length}`} style={{ margin: "0 0 10px" }}>
-        {paragraph.map((line, index) => (
-          <span key={index}>
-            {index > 0 ? " " : ""}
-            {line}
-          </span>
-        ))}
+      <p key={`p-${blocks.length}`} className="techbot-paragraph">
+        {formatInline(paragraph.join(" "))}
       </p>
     );
 
@@ -36,9 +60,9 @@ function FormattedMessage({ content }) {
 
     const Tag = listType === "ol" ? "ol" : "ul";
     blocks.push(
-      <Tag key={`list-${blocks.length}`} style={{ margin: "0 0 12px", paddingLeft: 20 }}>
+      <Tag key={`list-${blocks.length}`} className="techbot-list">
         {items.map((item, index) => (
-          <li key={index} style={{ margin: "4px 0" }}>{item}</li>
+          <li key={index}>{formatInline(item)}</li>
         ))}
       </Tag>
     );
@@ -49,6 +73,28 @@ function FormattedMessage({ content }) {
 
   lines.forEach((raw) => {
     const line = raw.trim();
+
+    if (codeLines) {
+      if (/^```/.test(line)) {
+        blocks.push(
+          <pre key={`code-${blocks.length}`} className="techbot-code">
+            <code>{codeLines.join("\n")}</code>
+          </pre>
+        );
+        codeLines = null;
+      } else {
+        codeLines.push(raw);
+      }
+      return;
+    }
+
+    if (/^```/.test(line)) {
+      flushParagraph();
+      flushList();
+      codeLines = [];
+      return;
+    }
+
     if (!line) {
       flushParagraph();
       flushList();
@@ -60,9 +106,28 @@ function FormattedMessage({ content }) {
       flushParagraph();
       flushList();
       blocks.push(
-        <h3 key={`h-${blocks.length}`} style={{ margin: "7px 0 9px", color: "#edf3ff" }}>
-          {heading[1]}
+        <h3 key={`h-${blocks.length}`} className="techbot-heading">
+          {formatInline(heading[1])}
         </h3>
+      );
+      return;
+    }
+
+    if (/^(?:[-*_]\s*){3,}$/.test(line)) {
+      flushParagraph();
+      flushList();
+      blocks.push(<hr key={`hr-${blocks.length}`} className="techbot-divider" />);
+      return;
+    }
+
+    const quote = line.match(/^>\s?(.*)$/);
+    if (quote) {
+      flushParagraph();
+      flushList();
+      blocks.push(
+        <blockquote key={`quote-${blocks.length}`} className="techbot-quote">
+          {formatInline(quote[1])}
+        </blockquote>
       );
       return;
     }
@@ -79,11 +144,19 @@ function FormattedMessage({ content }) {
       return;
     }
 
+    flushList();
     paragraph.push(line);
   });
 
   flushParagraph();
   flushList();
+  if (codeLines) {
+    blocks.push(
+      <pre key={`code-${blocks.length}`} className="techbot-code">
+        <code>{codeLines.join("\n")}</code>
+      </pre>
+    );
+  }
 
   return <div>{blocks}</div>;
 }

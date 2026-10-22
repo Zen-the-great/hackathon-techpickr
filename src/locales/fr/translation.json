@@ -12,7 +12,8 @@
     "closeMenu": "Fermer le menu"
   },
   "home": {
-    "heroTitle": "Le PC qu’il vous faut, sans hésitation.",
+    "heroTagline": "Think quicker with TechPickr",
+    "heroTitle": "Think quicker with TechPickr",
     "heroText": "Les ordinateurs portables proposés proviennent du catalogue local. Pour les PC de bureau, Gemini fournit des conseils généraux ; les produits et leur compatibilité ne sont pas vérifiés ici.",
     "buildPc": "Créer mon PC",
     "exploreBuilds": "Explorer les configurations",

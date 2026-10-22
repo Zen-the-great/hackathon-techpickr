@@ -12,7 +12,8 @@
     "closeMenu": "मेनू बंद करें"
   },
   "home": {
-    "heroTitle": "सही पीसी, बिना किसी उलझन के।",
+    "heroTagline": "Think quicker with TechPickr",
+    "heroTitle": "Think quicker with TechPickr",
     "heroText": "लैपटॉप सुझाव स्थानीय उत्पाद कैटलॉग से आते हैं। डेस्कटॉप PC के लिए Gemini सामान्य खरीद सलाह देता है; यहाँ उत्पाद विवरण और संगतता सत्यापित नहीं होती।",
     "buildPc": "मेरा पीसी बनाएँ",
     "exploreBuilds": "पीसी विकल्प देखें",

@@ -12,7 +12,8 @@
     "closeMenu": "メニューを閉じる"
   },
   "home": {
-    "heroTitle": "迷わず選べる、あなたにぴったりのPC。",
+    "heroTagline": "Think quicker with TechPickr",
+    "heroTitle": "Think quicker with TechPickr",
     "heroText": "ノートPCの候補はローカルカタログから表示します。デスクトップPCについてはGeminiが一般的な購入アドバイスを提供します。製品情報や互換性は検証していません。",
     "buildPc": "PCを組み立てる",
     "exploreBuilds": "構成を見る",

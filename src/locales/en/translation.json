@@ -21,7 +21,8 @@
     "closeMenu": "Close menu"
   },
   "home": {
-    "heroTitle": "The right PC. Without the guesswork.",
+    "heroTagline": "Think quicker with TechPickr",
+    "heroTitle": "Think quicker with TechPickr",
     "heroText": "Laptop matches come from the local product catalog. For desktop PCs, Gemini offers general buying guidance; product details and compatibility are not verified here.",
     "buildPc": "Build My PC",
     "exploreBuilds": "Explore Builds",

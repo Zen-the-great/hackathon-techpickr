@@ -12,7 +12,8 @@
     "closeMenu": "Menü schließen"
   },
   "home": {
-    "heroTitle": "Der passende PC. Ohne Rätselraten.",
+    "heroTagline": "Think quicker with TechPickr",
+    "heroTitle": "Think quicker with TechPickr",
     "heroText": "Laptop-Vorschläge stammen aus dem lokalen Produktkatalog. Für Desktop-PCs bietet Gemini allgemeine Kaufberatung; Produktangaben und Kompatibilität werden hier nicht verifiziert.",
     "buildPc": "PC zusammenstellen",
     "exploreBuilds": "PCs entdecken",
