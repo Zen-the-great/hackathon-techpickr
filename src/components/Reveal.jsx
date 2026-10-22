@@ -3,16 +3,15 @@ import "./Reveal.css";
 
 function Reveal({ children, delay = 0, className = "" }) {
   const ref = useRef(null);
-  const [shown, setShown] = useState(false);
+  const [shown, setShown] = useState(
+    () => !("IntersectionObserver" in window)
+  );
 
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
 
-    if (!("IntersectionObserver" in window)) {
-      setShown(true);
-      return;
-    }
+    if (!("IntersectionObserver" in window)) return;
 
     const observer = new IntersectionObserver(
       ([entry]) => {

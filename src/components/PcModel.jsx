@@ -147,7 +147,8 @@ function PcModel() {
     try {
       renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
     } catch (error) {
-      setFailed(true);
+      console.error("Unable to initialize the PC model renderer:", error);
+      queueMicrotask(() => setFailed(true));
       return undefined;
     }
     renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));

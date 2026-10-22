@@ -5,8 +5,8 @@ import { readFile } from "node:fs/promises";
 import { createHash } from "node:crypto";
 import path from "node:path";
 
-// Load credentials from the project root's .env.local file.
-config({ path: ".env.local", override: true });
+// Load credentials from the project root's .env file.
+config({ path: ".env", override: true });
 
 const SUPABASE_URL = process.env.SUPABASE_URL;
 const SUPABASE_KEY = process.env.SUPABASE_SECRET_KEY;
@@ -31,7 +31,7 @@ const FILES = [
 
 if (!SUPABASE_URL || !SUPABASE_KEY) {
   throw new Error(
-    "Missing SUPABASE_URL or SUPABASE_SECRET_KEY in .env.local"
+    "Missing SUPABASE_URL or SUPABASE_SECRET_KEY in .env"
   );
 }
 

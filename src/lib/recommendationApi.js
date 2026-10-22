@@ -11,9 +11,20 @@ export async function generateRecommendation(type, requirements) {
       signal: controller.signal,
       body: JSON.stringify({ type, requirements }),
     });
-    const payload = await response.json().catch(() => null);
+    const responseText = await response.text();
+    let payload = null;
+    try {
+      payload = JSON.parse(responseText);
+    } catch {
+      // Non-JSON responses usually indicate a proxy or deployment error.
+    }
     if (!response.ok) {
-      throw new Error(payload?.error || `Recommendation request failed (${response.status}).`);
+      if (typeof payload?.error === "string") {
+        throw new Error(payload.error);
+      }
+      throw new Error(
+        `Recommendation service returned an unexpected response (HTTP ${response.status}). Check the backend URL and logs.`
+      );
     }
     if (!payload?.recommendation || !Array.isArray(payload.recommendation.recommendations)) {
       throw new Error("The recommendation service returned an invalid response.");

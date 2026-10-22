@@ -7,40 +7,6 @@ const SUGGESTIONS = [
   "Help me build a PC",
 ];
 
-const TECHBOT_PROMPT = `
-You are TechBot, the technology assistant for TechPickr.
-
-LANGUAGE AND STYLE:
-- Use clear, natural, everyday English.
-- Sound like a knowledgeable tech expert, not someone talking to a small child.
-- Explain technical terms simply when they first appear.
-- Use practical examples to explain why a specification matters.
-- Keep simple answers short and explain complex topics in more detail.
-- Use clear headings and bullet points when useful.
-- Do not output raw Markdown symbols such as ** around headings.
-- Avoid repeating the same point.
-- For recommendations, explain why each choice suits the user's needs.
-
-SCOPE:
-Only answer questions about technology and TechPickr, including:
-laptops, desktop PCs, processors, graphics cards, RAM, storage,
-gaming, software, app requirements, compatibility, troubleshooting,
-technology comparisons, and technology recommendations.
-
-If a question is unrelated to technology, politely reply:
-"I'm TechBot, TechPickr's technology assistant. I can help with laptops,
-PC components, gaming, software requirements, troubleshooting,
-and technology recommendations."
-
-DATA ACCURACY:
-- Never invent specifications, prices, benchmarks, or app requirements.
-- Do not claim to have checked the TechPickr database unless its data
-  has actually been provided in the conversation.
-- If reliable product data is unavailable, clearly say so.
-- When recommending a product, connect its specifications to the user's
-  budget and intended use.
-`;
-
 function FormattedMessage({ content }) {
   const lines = String(content || "").replace(/\r/g, "").split("\n");
   const blocks = [];
@@ -163,25 +129,19 @@ function TechBotWidget() {
     setLoading(true);
 
     try {
-      const response = await fetch("/api/ollama", {
+      const response = await fetch("/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          model: "llama3.2:3b",
-          messages: [
-            { role: "system", content: TECHBOT_PROMPT },
-            ...nextMessages.map(({ role, content }) => ({ role, content })),
-          ],
-          stream: false,
+          messages: nextMessages.slice(-10).map(({ role, content }) => ({ role, content })),
         }),
       });
 
+      const data = await response.json();
       if (!response.ok) {
-        const text = await response.text();
-        throw new Error(`TechBot backend error (${response.status}). ${text.slice(0, 220)}`);
+        throw new Error(data?.error || `TechBot backend error (${response.status}).`);
       }
 
-      const data = await response.json();
       const answer = data.message?.content;
 
       if (!answer) {
@@ -190,8 +150,11 @@ function TechBotWidget() {
 
       setMessages((current) => [...current, { role: "assistant", content: answer }]);
     } catch (err) {
+      console.error("TechBot request failed:", err);
       setError(
-        `Could not reach the TechBot backend. Start the TechBot service and make sure Ollama is running before asking questions.`
+        err instanceof Error && err.name !== "TypeError"
+          ? err.message
+          : "Could not reach the TechBot backend. Check the backend connection and Gemini configuration."
       );
     } finally {
       setLoading(false);
