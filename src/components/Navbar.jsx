@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import RollLink from "./RollLink";
+import { useAuth } from "../contexts/useAuth";
+import { supabase } from "../supabaseClient.js";
 import "./Navbar.css";
 
 // The ids must match the id="..." of the sections on your Home page.
@@ -13,10 +15,13 @@ const sectionLinks = [
 
 function Navbar() {
   const { t, i18n } = useTranslation();
-  const [open, setOpen] = useState(false);
+  const [openPath, setOpenPath] = useState("");
   const [scrolled, setScrolled] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
+  const { user } = useAuth();
+  const [accountError, setAccountError] = useState("");
+  const open = openPath === location.pathname;
 
   // slightly stronger background after the page is scrolled
   useEffect(() => {
@@ -26,14 +31,9 @@ function Navbar() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  // close the mobile menu when the page changes
-  useEffect(() => {
-    setOpen(false);
-  }, [location.pathname]);
-
   // close the mobile menu with the Escape key
   useEffect(() => {
-    const onKey = (e) => e.key === "Escape" && setOpen(false);
+    const onKey = (e) => e.key === "Escape" && setOpenPath("");
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, []);
@@ -41,7 +41,7 @@ function Navbar() {
   // scroll to a section on the Home page (go Home first if needed)
   const goToSection = (id) => (e) => {
     e.preventDefault();
-    setOpen(false);
+    setOpenPath("");
     const scroll = () =>
       document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
     if (location.pathname === "/") {
@@ -51,6 +51,24 @@ function Navbar() {
       setTimeout(scroll, 150);
     }
   };
+
+  async function signOut() {
+    setAccountError("");
+    if (!supabase) {
+      setAccountError("Supabase is not configured.");
+      return;
+    }
+    try {
+      const { error } = await supabase.auth.signOut();
+      if (error) {
+        setAccountError(error.message || "Could not log out.");
+        return;
+      }
+      navigate("/");
+    } catch (error) {
+      setAccountError(error instanceof Error ? error.message : "Could not log out.");
+    }
+  }
 
   return (
     <header className={`nav ${scrolled ? "nav-scrolled" : ""} ${open ? "nav-open" : ""}`}>
@@ -74,9 +92,17 @@ function Navbar() {
             {t(`nav.${s.key}`)}
           </RollLink>
         ))}
+        <RollLink to={user ? "/my-recommendations" : "/login"}>
+          {user ? "My Recommendations" : "Log in"}
+        </RollLink>
         <Link to="/build" className="nav-cta nav-cta-mobile">
           {t("nav.buildPc")} <span aria-hidden="true">→</span>
         </Link>
+        {user && (
+          <button type="button" className="nav-signout-mobile" onClick={signOut}>
+            Log out
+          </button>
+        )}
       </nav>
 
       <label className="nav-language" title={t("language.label")}>
@@ -102,6 +128,11 @@ function Navbar() {
       <Link to="/build" className="nav-cta nav-cta-desktop">
         {t("nav.buildPc")} <span aria-hidden="true">→</span>
       </Link>
+      {user && (
+        <button type="button" className="nav-signout-desktop" onClick={signOut} title={user.email || "Log out"}>
+          Log out
+        </button>
+      )}
 
       <button
         type="button"
@@ -109,11 +140,12 @@ function Navbar() {
         aria-label={open ? t("nav.closeMenu") : t("nav.openMenu")}
         aria-expanded={open}
         aria-controls="nav-menu"
-        onClick={() => setOpen((v) => !v)}
+        onClick={() => setOpenPath(open ? "" : location.pathname)}
       >
         <span />
         <span />
       </button>
+      {accountError && <span className="nav-account-error" role="alert">{accountError}</span>}
     </header>
   );
 }

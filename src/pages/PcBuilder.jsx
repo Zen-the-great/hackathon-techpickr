@@ -1,7 +1,8 @@
 import { useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import Button from "../components/Button";
-import { getPCBuildRecommendation } from "../lib/pcRecommendations";
+import RecommendationDisplay from "../components/RecommendationDisplay";
+import { generateRecommendation } from "../lib/recommendationApi";
 import "./Questionnaire.css";
 import "./PcBuilder.css";
 
@@ -231,7 +232,7 @@ function PcBuilder() {
     setError("");
 
     try {
-      const recommendation = await getPCBuildRecommendation(answers);
+      const recommendation = await generateRecommendation("pc_build", answers);
       setResult(recommendation);
     } catch (requestError) {
       setError(
@@ -305,6 +306,24 @@ function PcBuilder() {
           {t("pcBuilder.edit")}
         </Button>
       </article>
+    );
+  }
+
+  if (result) {
+    return (
+      <main className="container quiz pc-advisor">
+        <header className="pc-advisor-header">
+          <p className="pc-builder-eyebrow">TECHPICKR / PC ADVISOR</p>
+          <h1>{t("pcBuilder.title")}</h1>
+          <p className="pc-builder-description">{t("pcBuilder.description")}</p>
+        </header>
+        <RecommendationDisplay type="pc_build" userInput={answers} result={result} />
+        <div className="pc-result-actions">
+          <Button onClick={() => editAnswers(TOTAL_STEPS)} arrow>
+            {t("pcBuilder.adjustAnswers")}
+          </Button>
+        </div>
+      </main>
     );
   }
 

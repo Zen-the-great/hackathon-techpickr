@@ -155,6 +155,33 @@
   cursor: pointer;
 }
 
+.nav-signout-desktop,
+.nav-signout-mobile {
+  padding: 8px 11px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--text-muted);
+  font: inherit;
+  font-size: 0.78rem;
+}
+
+.nav-signout-mobile {
+  display: none;
+}
+
+.nav-account-error {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 12px;
+  padding: 8px 12px;
+  border: 1px solid rgba(255, 107, 125, 0.35);
+  border-radius: 10px;
+  background: #24121a;
+  color: #ffb4bf;
+  font-size: 0.8rem;
+}
+
 .nav-burger span {
   position: absolute;
   left: 11px;
@@ -218,6 +245,14 @@
   .nav .nav-cta-mobile {
     display: inline-flex;
     margin-top: 6px;
+  }
+
+  .nav-signout-desktop {
+    display: none;
+  }
+
+  .nav-signout-mobile {
+    display: inline-flex;
   }
 }
 

@@ -14,6 +14,9 @@ import Results from "./pages/Results";
 import PcPreview from "./pages/PcPreview";
 import Community from "./pages/Community";
 import PcBuilder from "./pages/PcBuilder";
+import Login from "./pages/Login";
+import MyRecommendations from "./pages/MyRecommendations";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 function ScrollToTop() {
   const { pathname, hash } = useLocation();
@@ -67,6 +70,16 @@ function App() {
 
         {/* Existing community page */}
         <Route path="/community" element={<Community />} />
+
+        <Route path="/login" element={<Login />} />
+        <Route
+          path="/my-recommendations"
+          element={
+            <ProtectedRoute>
+              <MyRecommendations />
+            </ProtectedRoute>
+          }
+        />
       </Routes>
 
       <Footer />

@@ -432,6 +432,25 @@
   color: var(--muted);
 }
 
+.rs-loading,
+.rs-error {
+  margin-top: 22px;
+  padding: 16px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--card);
+  color: var(--muted);
+}
+
+.rs-error {
+  border-color: rgba(185, 28, 28, 0.25);
+}
+
+.rs-error p {
+  margin-bottom: 12px;
+  color: #991b1b;
+}
+
 /* ---------- animation ---------- */
 @keyframes rs-rise {
   from { opacity: 0; transform: translateY(14px); }
