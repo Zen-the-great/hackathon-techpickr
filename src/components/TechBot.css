@@ -1,0 +1,301 @@
+.techbot-widget {
+  position: fixed;
+  right: 26px;
+  bottom: 26px;
+  z-index: 110;
+  font-family: "DM Sans", "Segoe UI", sans-serif;
+}
+
+.techbot-launcher {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 18px;
+  border: 1px solid rgba(154, 174, 255, 0.3);
+  border-radius: 999px;
+  background: linear-gradient(135deg, rgba(97, 92, 255, 0.92), rgba(61, 176, 255, 0.8));
+  color: #edf6ff;
+  box-shadow: 0 18px 38px rgba(76, 90, 255, 0.35);
+  font-size: 0.9rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+}
+
+.techbot-launcher:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 22px 42px rgba(76, 90, 255, 0.42);
+}
+
+.techbot-launcher-icon {
+  display: inline-grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: rgba(8, 12, 22, 0.3);
+  font-size: 0.95rem;
+}
+
+.techbot-panel {
+  width: min(420px, calc(100vw - 24px));
+  height: min(680px, calc(100vh - 34px));
+  display: flex;
+  flex-direction: column;
+  border: 1px solid rgba(145, 170, 255, 0.22);
+  border-radius: 26px;
+  background: rgba(9, 13, 22, 0.88);
+  box-shadow: 0 30px 80px rgba(2, 6, 16, 0.68);
+  backdrop-filter: blur(16px);
+  overflow: hidden;
+}
+
+.techbot-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 18px 18px 14px;
+  border-bottom: 1px solid rgba(142, 167, 255, 0.18);
+  background: rgba(17, 23, 35, 0.72);
+}
+
+.techbot-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.techbot-brand-icon {
+  width: 32px;
+  height: 32px;
+  display: grid;
+  place-items: center;
+  border-radius: 10px;
+  background: linear-gradient(135deg, rgba(124, 92, 255, 0.95), rgba(51, 181, 255, 0.8));
+  color: #eef7ff;
+  font-weight: 800;
+}
+
+.techbot-brand-text {
+  min-width: 0;
+}
+
+.techbot-brand-text strong {
+  display: block;
+  font-size: 0.95rem;
+  color: #edf5ff;
+}
+
+.techbot-brand-text span {
+  display: block;
+  font-size: 0.68rem;
+  color: #9cb1d6;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+}
+
+.techbot-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.techbot-close,
+.techbot-new {
+  display: inline-grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border: 1px solid rgba(155, 175, 255, 0.18);
+  border-radius: 10px;
+  background: rgba(20, 27, 38, 0.9);
+  color: #dfeafd;
+}
+
+.techbot-chat {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  overflow-y: auto;
+  padding: 18px 16px 16px;
+  background:
+    radial-gradient(circle at top, rgba(93, 117, 255, 0.12), transparent 32%),
+    rgba(10, 13, 20, 0.28);
+}
+
+.techbot-welcome {
+  margin: 6px auto 2px;
+  text-align: center;
+  max-width: 280px;
+}
+
+.techbot-welcome-badge {
+  display: inline-grid;
+  place-items: center;
+  width: 54px;
+  height: 54px;
+  margin-bottom: 16px;
+  border-radius: 18px;
+  background: linear-gradient(145deg, rgba(24, 39, 65, 0.95), rgba(12, 18, 30, 0.9));
+  border: 1px solid rgba(94, 124, 184, 0.4);
+  color: #bdd6ff;
+  font-size: 1.5rem;
+  font-weight: 800;
+  box-shadow: 0 18px 42px rgba(29, 63, 113, 0.2);
+}
+
+.techbot-welcome h2 {
+  margin: 0 0 8px;
+  color: #edf3ff;
+  font-size: 1.55rem;
+  font-weight: 600;
+}
+
+.techbot-welcome p {
+  color: #9aaecc;
+  font-size: 0.82rem;
+  line-height: 1.6;
+}
+
+.techbot-message-row {
+  display: flex;
+  align-items: flex-end;
+  gap: 10px;
+}
+
+.techbot-message-row.user {
+  justify-content: flex-end;
+}
+
+.techbot-avatar {
+  display: inline-grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  flex-shrink: 0;
+  border-radius: 10px;
+  background: rgba(30, 44, 68, 0.9);
+  border: 1px solid rgba(136, 163, 232, 0.28);
+  color: #b9d4ff;
+  font-weight: 800;
+}
+
+.techbot-bubble {
+  max-width: 82%;
+  padding: 12px 14px;
+  border-radius: 14px 14px 14px 4px;
+  border: 1px solid rgba(132, 154, 209, 0.25);
+  background: rgba(17, 22, 31, 0.9);
+  color: #d8e4f6;
+  line-height: 1.7;
+  font-size: 0.88rem;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.techbot-message-row.user .techbot-bubble {
+  border-radius: 14px 14px 4px 14px;
+  background: linear-gradient(135deg, rgba(104, 102, 255, 0.18), rgba(52, 181, 255, 0.12));
+  border-color: rgba(138, 164, 255, 0.38);
+}
+
+.techbot-suggestions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 0 2px;
+}
+
+.techbot-suggestion {
+  padding: 8px 10px;
+  border: 1px solid rgba(132, 151, 203, 0.18);
+  border-radius: 10px;
+  background: rgba(14, 19, 28, 0.8);
+  color: #d7e8ff;
+  font-size: 0.74rem;
+  text-align: left;
+}
+
+.techbot-suggestion:hover {
+  border-color: rgba(152, 169, 255, 0.38);
+  background: rgba(19, 27, 37, 0.95);
+}
+
+.techbot-composer {
+  border-top: 1px solid rgba(142, 167, 255, 0.18);
+  padding: 14px 14px 16px;
+  background: rgba(10, 14, 23, 0.82);
+}
+
+.techbot-input-wrap {
+  display: flex;
+  gap: 10px;
+  align-items: flex-end;
+  padding: 10px 12px;
+  border: 1px solid rgba(136, 162, 239, 0.26);
+  border-radius: 16px;
+  background: rgba(12, 17, 27, 0.9);
+}
+
+.techbot-input {
+  width: 100%;
+  min-height: 44px;
+  max-height: 120px;
+  resize: none;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: #edf6ff;
+  font: inherit;
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+
+.techbot-send {
+  display: inline-grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+  border: 0;
+  border-radius: 12px;
+  background: linear-gradient(135deg, rgba(124, 92, 255, 0.96), rgba(67, 182, 255, 0.86));
+  color: white;
+  font-size: 1.05rem;
+}
+
+.techbot-send:disabled {
+  opacity: 0.45;
+}
+
+.techbot-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-top: 10px;
+  color: #93a8c9;
+  font-size: 0.68rem;
+}
+
+.techbot-error {
+  margin-top: 8px;
+  color: #ffb7c0;
+  font-size: 0.72rem;
+  line-height: 1.5;
+}
+
+@media (max-width: 640px) {
+  .techbot-widget {
+    right: 12px;
+    bottom: 12px;
+  }
+
+  .techbot-panel {
+    width: min(92vw, 400px);
+    height: min(72vh, 620px);
+  }
+}

@@ -1,0 +1,40 @@
+.roll {
+  position: relative;
+  display: inline-block;
+  overflow: hidden;
+  height: 1.5em;
+  line-height: 1.5em;
+  color: var(--roll-color, #9aa0a6);
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.roll-text {
+  display: block;
+  position: relative;
+  transition: transform 0.5s cubic-bezier(0.7, 0, 0.2, 1);
+}
+
+/* the second copy that rolls in from below */
+.roll-text::after {
+  content: attr(data-text);
+  position: absolute;
+  left: 0;
+  top: 100%;
+  color: var(--roll-hover, #ffffff);
+}
+
+.roll:hover .roll-text,
+.roll:focus-visible .roll-text {
+  transform: translateY(-100%);
+}
+
+.roll-active {
+  color: var(--roll-hover, #ffffff);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .roll-text {
+    transition: none;
+  }
+}

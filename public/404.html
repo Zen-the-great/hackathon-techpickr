@@ -1,0 +1,16 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Loading TechPickr…</title>
+  </head>
+  <body>
+    <script>
+      const base = "/TechPickr/";
+      const suffix = window.location.pathname.replace(/^\/TechPickr\/?/, "");
+      const route = `/${suffix}${window.location.search}${window.location.hash}`;
+      window.location.replace(`${base}?route=${encodeURIComponent(route)}`);
+    </script>
+  </body>
+</html>

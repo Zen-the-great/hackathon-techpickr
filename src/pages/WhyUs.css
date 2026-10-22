@@ -1,0 +1,282 @@
+.why-hero {
+  padding: 96px 0 72px;
+  background: linear-gradient(180deg, #e9ecff 0%, var(--bg) 100%);
+}
+
+.why-hero-inner {
+  max-width: 760px;
+}
+
+.why-hero h1 {
+  max-width: 680px;
+}
+
+.why-lead {
+  margin-top: 22px;
+  max-width: 560px;
+  font-size: 1.125rem;
+}
+
+.why-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 34px;
+}
+
+/* Tabs */
+.tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 24px;
+}
+
+.tab {
+  padding: 10px 20px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text-muted);
+  font-size: 0.9375rem;
+  font-weight: 500;
+  transition:
+    background 220ms ease,
+    color 220ms ease,
+    border-color 220ms ease,
+    transform 220ms cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+.tab:hover {
+  color: var(--text);
+  border-color: var(--indigo);
+  transform: translateY(-2px);
+}
+
+.tab:active {
+  transform: scale(0.96);
+}
+
+.tab.active {
+  background: var(--text);
+  border-color: var(--text);
+  color: #ffffff;
+}
+
+.tab:focus-visible,
+.faq-q:focus-visible {
+  outline: 3px solid var(--indigo-soft);
+  outline-offset: 2px;
+}
+
+.tab-panel {
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: 40px;
+  padding: 40px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  animation: panel-in 450ms cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+@keyframes panel-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.tab-panel h3 {
+  font-size: 1.5rem;
+  margin-bottom: 12px;
+}
+
+.points {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  align-self: center;
+}
+
+.points li {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  color: var(--text);
+  font-size: 0.9375rem;
+}
+
+.tick {
+  flex: none;
+  width: 22px;
+  height: 22px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+/* Compare */
+.compare {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.compare-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.compare-cell {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 18px 22px;
+  border-radius: var(--radius-sm);
+  font-size: 0.9375rem;
+  transition: transform 220ms ease, box-shadow 220ms ease;
+}
+
+.compare-cell:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow);
+}
+
+.compare-cell.no {
+  background: #fdf1f1;
+  color: #7f1d1d;
+}
+
+.compare-cell.yes {
+  background: var(--accent-soft);
+  color: #065f46;
+  font-weight: 500;
+}
+
+.mark {
+  flex: none;
+  font-weight: 700;
+}
+
+/* FAQ */
+.faq-wrap {
+  max-width: 760px;
+}
+
+.faq {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.faq-item {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  transition: border-color 220ms ease, box-shadow 220ms ease;
+}
+
+.faq-item:hover,
+.faq-item.open {
+  border-color: var(--indigo);
+}
+
+.faq-item.open {
+  box-shadow: var(--shadow);
+}
+
+.faq-q {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 20px 22px;
+  background: none;
+  border: none;
+  border-radius: var(--radius-sm);
+  color: var(--text);
+  font-size: 1rem;
+  font-weight: 500;
+  text-align: left;
+}
+
+.faq-icon {
+  flex: none;
+  width: 28px;
+  height: 28px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: var(--indigo-soft);
+  color: var(--indigo);
+  font-size: 1.125rem;
+  transition: transform 300ms cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+.faq-item.open .faq-icon {
+  transform: rotate(45deg);
+}
+
+/* Smooth open and close without knowing the height */
+.faq-a {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 350ms cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+.faq-item.open .faq-a {
+  grid-template-rows: 1fr;
+}
+
+.faq-a > div {
+  overflow: hidden;
+}
+
+.faq-a p {
+  padding: 0 22px 22px;
+  font-size: 0.9375rem;
+}
+
+@media (max-width: 820px) {
+  .why-hero {
+    padding: 64px 0 48px;
+  }
+
+  .tab-panel {
+    grid-template-columns: 1fr;
+    padding: 28px;
+    gap: 24px;
+  }
+
+  .compare-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tab-panel {
+    animation: none;
+  }
+
+  .tab,
+  .compare-cell,
+  .faq-icon,
+  .faq-a {
+    transition: none;
+  }
+}
