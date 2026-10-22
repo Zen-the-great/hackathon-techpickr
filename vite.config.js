@@ -1,8 +1,9 @@
+import process from 'node:process'
 import react from '@vitejs/plugin-react'
 import { defineConfig } from 'vite'
 
 export default defineConfig(({ command }) => ({
-  base: command === 'build' ? '/TechPickr/' : '/',
+  base: command === 'build' && process.env.VERCEL !== '1' ? '/TechPickr/' : '/',
   plugins: [react()],
   server: {
     host: '0.0.0.0',
