@@ -70,7 +70,7 @@ npm.cmd run dev
 
 Open the URL printed by Vite. The Vite development proxy forwards `/api` requests to `http://127.0.0.1:3001`. For a production deployment, deploy the Node backend separately and configure the hosting service to provide its port and bind it on a reachable interface (set `HOST=0.0.0.0` for container hosts that require it). Set backend `FRONTEND_ORIGIN` to the deployed frontend origin, and set frontend `VITE_RECOMMENDATION_API_URL` to the public backend origin (without `/api`) before building. Rebuild and redeploy the frontend after changing that Vite variable. Check `https://YOUR_BACKEND_ORIGIN/api/health` returns JSON with `"ok": true` before testing recommendations; a proxy-generated HTTP 502 usually means the backend is not reachable at the configured origin.
 
-The frontend is configured for the `/TechPickr/` GitHub Pages path. Its `404.html` fallback preserves deep links so refreshing pages such as `/my-recommendations` restores the route before React Router starts.
+The default production build uses root-relative URLs for Vercel and other root-domain hosts. For GitHub Pages at `https://<owner>.github.io/TechPickr/`, use `npm run build:github-pages`; its `404.html` fallback preserves deep links such as `/my-recommendations`.
 
 Useful checks:
 
